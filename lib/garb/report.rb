@@ -21,6 +21,10 @@ module Garb
     def results
       ReportResponse.new(send_request_for_body).results
     end
+    
+    def session
+      @profile.session
+    end
 
   end
 end

@@ -32,7 +32,7 @@ module Garb
     end
 
     def results(profile, opts = {}, &block)
-      @profile = profile.is_a?(Profile) ? profile : Profile.first(profile)
+      @profile = profile
 
       @start_date = opts.fetch(:start_date, Time.now - MONTH)
       @end_date = opts.fetch(:end_date, Time.now)
@@ -69,11 +69,13 @@ module Garb
     def format_time(t)
       t.strftime('%Y-%m-%d')
     end
+    
+    def session
+      raise NotImplementedError
+    end
 
     def send_request_for_body
-      request = DataRequest.new(URL, params)
-      response = request.send_request
-      response.body
+      session.request(URL, params).body
     end
   end
 end

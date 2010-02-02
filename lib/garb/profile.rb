@@ -1,7 +1,7 @@
 module Garb
   class Profile
     
-    attr_reader :table_id, :title, :account_name, :account_id, :web_property_id
+    attr_reader :table_id, :title, :account_name, :account_id, :web_property_id, :session
     
     class Property
       include HappyMapper
@@ -28,7 +28,8 @@ module Garb
       has_many :properties, Property
     end
 
-    def initialize(entry)
+    def initialize(entry, session)
+      @session = session
       @title = entry.title
       @table_id = entry.tableId
 
@@ -41,15 +42,11 @@ module Garb
       Garb.from_google_analytics(@table_id)
     end
 
-    def self.all
+    def self.all(session)
       url = "https://www.google.com/analytics/feeds/accounts/default"
-      response = DataRequest.new(url).send_request      
-      profiles = Entry.parse(response.body).map {|entry| new(entry)}
-      ProfileArray.new(profiles)
+      response = session.request(url)
+      Entry.parse(response.body).map {|entry| new(entry, session)}
     end
-
-    def self.first(id)
-      all.detect {|profile| profile.id == id || profile.web_property_id == id }
-    end
+    
   end
 end

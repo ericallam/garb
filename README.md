@@ -46,21 +46,17 @@ Basic Usage
 Login
 -----
   
-    > Garb::Session.login(username, password)
+    > session = Garb::Session.new
+    > session.login(username, password)
 
 Accounts
 --------
-    > Garb::Account.all
+    > session.accounts
 
 Profiles
 --------
 
-    > Garb::Account.first.profiles
-    
-    > Garb::Profile.first('UA-XXXX-XX')
-    
-    > Garb::Profile.all
-    > profile = Garb::Profile.all.first
+    > session.accounts.first.profiles
 
 Define a Report Class and Get Results
 -------------------------------------
