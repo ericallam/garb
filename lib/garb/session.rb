@@ -1,7 +1,7 @@
 module Garb
   class Session
 
-    attr_accessor :auth_token, :email
+    attr_accessor :auth_token, :email, :requestor_method
     
     def login(email, password, opts={})
       self.email = email
@@ -14,7 +14,14 @@ module Garb
     end
     
     def request(url, params={})
-      DataRequest.new(url, self.auth_token, params).send_request
+      requestor_method.call(self, url, params)
     end
+    
+    def requestor_method
+      @requestor_method ||= Proc.new do |s, url, params|
+        DataRequest.get(url, s.auth_token, params)
+      end
+    end
+    
   end
 end

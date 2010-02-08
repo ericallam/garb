@@ -1,26 +1,16 @@
 module Garb
   class DataRequest
-
-    def initialize(base_url, auth_token, parameters={})
-      @base_url = base_url
-      @auth_token = auth_token
-      @parameters = parameters
-    end
-
-    def query_string
-      parameter_list = @parameters.map {|k,v| "#{k}=#{v}" }
-      parameter_list.empty? ? '' : "?#{parameter_list.join('&')}"
-    end
-
-    def uri
-      URI.parse(@base_url)
-    end
-
-    def send_request
+    
+    def self.get(url, auth_token, parameters={})
+      uri = URI.parse(url)
+      
+      parameter_list = parameters.map {|k,v| "#{k}=#{v}" }
+      query_string = parameter_list.empty? ? '' : "?#{parameter_list.join('&')}"
+      
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      response = http.get("#{uri.path}#{query_string}", 'Authorization' => "GoogleLogin auth=#{@auth_token}")
+      response = http.get("#{uri.path}#{query_string}", 'Authorization' => "GoogleLogin auth=#{auth_token}")
       raise response.body.inspect unless response.is_a?(Net::HTTPOK)
       response
     end
